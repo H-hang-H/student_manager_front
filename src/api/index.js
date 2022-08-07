@@ -21,3 +21,6 @@ export const reqchangestudent=(data)=>requests({url:'/use/studentinfo/change',me
 
 // 模糊查询
 export const reqselect=(data)=>requests({url:`/use/studentinfo/select?${data}`,method:'GET'})
+
+// 注册操作
+export const reqregister=(data)=>requests({url:'register',method:'POST',data})
