@@ -3,7 +3,7 @@
     <el-form :rules="rules" ref="loginform" :model="loginform" class="loginform">
       <h3 class="logintitle">登录系统</h3>
       <el-form-item prop="username" label="用户名">
-        <el-input type="text" auto-complete="false" v-model="loginform.username" placeholder="请输入用户名" />
+        <el-input type="text" auto-complete="false" v-model="loginform.username" placeholder="请输入手机号" />
       </el-form-item>
       <el-form-item prop="password" label="密码">
         <el-input type="password" auto-complete="false" v-model="loginform.password" />

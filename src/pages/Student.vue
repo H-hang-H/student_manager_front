@@ -19,24 +19,24 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="学号" prop="stunumber">
-                <el-input v-model="formData.stunumber" />
+                <el-input v-model="formData.stunumber" placeholder="学号在0-1000之间的整数"/>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="姓名" prop="stuname">
-                <el-input v-model="formData.stuname" />
+                <el-input v-model="formData.stuname" placeholder="请输入2-5个汉字"/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="性别" prop="stusex">
-                <el-input v-model="formData.stusex" />
+                <el-input v-model="formData.stusex" placeholder="请输入 男 女"/>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="院系" prop="stucity">
-                <el-input v-model="formData.stucity" />
+                <el-input v-model="formData.stucity" placeholder="输入 AS BS CS DS ES IS"/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -89,8 +89,7 @@
     </div>
 
     <!-- 显示数据区域 -->
-    <el-table size="small" current-row-key="id" stripe highlight-current-row 
-    :data="dataList">
+    <el-table size="small" current-row-key="id" stripe highlight-current-row :data="dataList">
       <el-table-column type="index" align="center" label="序号"></el-table-column>
       <el-table-column prop="stuname" label="姓名" align="center"></el-table-column>
       <el-table-column prop="stunumber" label="学号" align="center"></el-table-column>
@@ -107,12 +106,8 @@
 
     <!--分页组件-->
     <div class="pagination-container">
-      <el-pagination
-        background 
-        @current-change="handleCurrentChange"
-        :current-page="pagination.currentPage" 
-        :page-size="pagination.pagesize" 
-        layout="total,prev,pager,next,jumper" >
+      <el-pagination background @current-change="handleCurrentChange" :current-page="pagination.currentPage"
+        :page-size="pagination.pagesize" layout="total,prev,pager,next,jumper">
       </el-pagination>
     </div>
 
@@ -126,7 +121,12 @@ export default {
   data() {
     return {
       dataList: [],
-      formData: {},
+      formData: {
+        stunumber:'',
+        stusex:'',
+        stucity:'',
+        stuname:''
+      },
       dialogFormVisible: false,
       dialogFormVisible4Edit: false,
       rules: {
@@ -156,7 +156,7 @@ export default {
     // 向服务器请求数据
     async getsome() {
       let city = this.$route.query.city
-      let data=city+'/'+this.pagination.currentPage+'/'+this.pagination.pageSize
+      let data = city + '/' + this.pagination.currentPage + '/' + this.pagination.pageSize
       await this.$store.dispatch('showstudentList', data)
       this.dataList = this.studentlist
     },
@@ -172,24 +172,30 @@ export default {
     },
     // 提交数据，新建用户
     handleAdd() {
-      // console.log(this.formData);
-      let form = new URLSearchParams()
-      form.append('stunumber', this.formData.stunumber)
-      form.append('stusex', this.formData.stusex)
-      form.append('stucity', this.formData.stucity)
-      form.append('stuname', this.formData.stuname)
-      this.$store.dispatch('addstudent', form).then(res => {
-        if (res.status === 0) {
-          this.$message.success(res.message)
-          this.dialogFormVisible = false
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-        .finally(() => {
-          this.getsome();
-          this.formData = {}
-        });
+      // 对表单数据进行判断
+      let flag = this.verify(this.formData)
+      if (flag) {
+        let form = new URLSearchParams()
+        form.append('stunumber', this.formData.stunumber)
+        form.append('stusex', this.formData.stusex)
+        form.append('stucity', this.formData.stucity)
+        form.append('stuname', this.formData.stuname)
+        // 派发actions，将数据提交
+        this.$store.dispatch('addstudent', form).then(res => {
+          if (res.status === 0) {
+            this.$message.success(res.message)
+            this.dialogFormVisible = false
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+          .finally(() => {
+            this.getsome();
+            this.formData = {}
+          });
+      }else{
+        this.$message.error('信息校验错误')
+      }
     },
     // 删除按钮
     handleDelete(row) {
@@ -227,7 +233,6 @@ export default {
     },
     // 修改的数据展示
     async handleUpdate(row) {
-      console.log(row);
       this.dialogFormVisible4Edit = true
       // 获取目标学生信息
       await this.$store.dispatch('gettargetstuinfo', row.stunumber)
@@ -254,14 +259,28 @@ export default {
     },
     //切换页码
     handleCurrentChange(currentPage) {
-      // this.dataList=this.dataList.slice((this.pagination.currentPage - 1) * this.pagination.pageSize, this.pagination.currentPage * this.pagination.pageSize)
       this.pagination.currentPage = currentPage;
       this.getsome()
     },
-    // handleCurrentChange(currentPage) {
-    //   this.pagination.currentPage = currentPage;
-    //   console.log(this.pagination.currentPage); //点击第几页
-    // },
+    // 校验表单数据
+    verify(formData) {
+      var citys=['IS','AS','BS','CS' ,'DS','ES']
+      var sexs=['男','女']
+      // 名字校验
+      let name = /^[\u4e00-\u9fa5]{0,5}$/
+      let number = /^\d{1,3}$/
+      let flag_name = name.test(formData.stuname)
+      // 性别校验
+      let flag_sex = sexs.some(item=>formData.stusex===item)
+      let flag_city = citys.some(item=>formData.stucity===item)
+      let flag_number = number.test(formData.stunumber)
+      if (flag_number & flag_name & flag_city & flag_sex) {
+        return true
+      } else {
+        return false
+      }
+    }
+
   },
   computed: {
     // 获取学生数据

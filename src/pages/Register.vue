@@ -26,8 +26,8 @@ export default {
         password: ''
       },
       rules: {
-        username: [{ required: true, message: "请输用户名", trigger: "blur" }],
-        password: [{ required: true, message: "请输密码", trigger: "blur" }],
+        username: [{ required: true, message: "请输手机号", trigger: "blur" }],
+        password: [{ required: true, message: "请输密码，6-12位", trigger: "blur" }],
       }
     }
   },
