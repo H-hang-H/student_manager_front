@@ -1,7 +1,7 @@
 import {
     reqlogin
 } from "@/api"
-import {setToken} from '../utils/toekn'
+import {setToken,removeToken} from '../utils/toekn'
 
 const actions = {
     // 实现登录，token
@@ -17,11 +17,19 @@ const actions = {
             }
         }) 
         return result
+    },
+    // 退出登录，清除token
+    logout({commit}){
+        commit('CLEAR')
     }
 }
 const mutations = {
     GETLOGIN(state,token){
         state.token=token
+    },
+    CLEAR(state){
+        state.token='',
+        removeToken()
     }
 }
 const state = {

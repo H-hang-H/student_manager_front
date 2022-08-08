@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header v-show="$route.meta.show"/>
+    <Header v-show="$route.meta.show" />
     <Main>
       <router-view></router-view>
     </Main>
@@ -13,19 +13,24 @@ import Main from './components/Main/Main.vue'
 export default {
   name: 'App',
   components: {
-    Header,Main
+    Header, Main
   },
-  data(){
-    return{
+  data() {
+    return {
 
     }
   },
-  methods:{
-    
-  }
+  methods: {
+
+  },
+
+  mounted() {
+  
+  },
+
+  
 }
 </script>
 
 <style>
-
 </style>

@@ -19,24 +19,24 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="学号" prop="stunumber">
-                <el-input v-model="formData.stunumber" placeholder="学号在0-1000之间的整数"/>
+                <el-input v-model="formData.stunumber" placeholder="学号在0-1000之间的整数" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="姓名" prop="stuname">
-                <el-input v-model="formData.stuname" placeholder="请输入2-5个汉字"/>
+                <el-input v-model="formData.stuname" placeholder="请输入2-5个汉字" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="性别" prop="stusex">
-                <el-input v-model="formData.stusex" placeholder="请输入 男 女"/>
+                <el-input v-model="formData.stusex" placeholder="请输入 男 女" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="院系" prop="stucity">
-                <el-input v-model="formData.stucity" placeholder="输入 AS BS CS DS ES IS"/>
+                <el-input v-model="formData.stucity" placeholder="输入 AS BS CS DS ES IS" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -55,7 +55,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="学号" prop="stunumber">
-                <el-input v-model="formData.stunumber" />
+                <el-input v-model="formData.stunumber" readonly/>
               </el-form-item>
             </el-col>
 
@@ -122,10 +122,10 @@ export default {
     return {
       dataList: [],
       formData: {
-        stunumber:'',
-        stusex:'',
-        stucity:'',
-        stuname:''
+        stunumber: '',
+        stusex: '',
+        stucity: '',
+        stuname: ''
       },
       dialogFormVisible: false,
       dialogFormVisible4Edit: false,
@@ -193,7 +193,7 @@ export default {
             this.getsome();
             this.formData = {}
           });
-      }else{
+      } else {
         this.$message.error('信息校验错误')
       }
     },
@@ -240,22 +240,27 @@ export default {
     },
     // 修改操作
     handleEdit() {
-      let form = new URLSearchParams()
-      form.append('stunumber', this.formData.stunumber)
-      form.append('stusex', this.formData.stusex)
-      form.append('stucity', this.formData.stucity)
-      form.append('stuname', this.formData.stuname)
-      this.$store.dispatch('changestudent', form).then(res => {
-        if (res.status !== 0) {
-          this.$message.error(res.message)
-        } else {
-          this.$message.success(res.message)
-        }
-      }).finally(() => {
-        this.dialogFormVisible4Edit = false
-        this.getsome()
-        this.formData = {}
-      })
+      let flag = this.verify(this.formData)
+      if (flag) {
+        let form = new URLSearchParams()
+        form.append('stunumber', this.formData.stunumber)
+        form.append('stusex', this.formData.stusex)
+        form.append('stucity', this.formData.stucity)
+        form.append('stuname', this.formData.stuname)
+        this.$store.dispatch('changestudent', form).then(res => {
+          if (res.status !== 0) {
+            this.$message.error(res.message)
+          } else {
+            this.$message.success(res.message)
+          }
+        }).finally(() => {
+          this.dialogFormVisible4Edit = false
+          this.getsome()
+          this.formData = {}
+        })
+      }else {
+        this.$message.error('信息校验错误')
+      }
     },
     //切换页码
     handleCurrentChange(currentPage) {
@@ -264,15 +269,15 @@ export default {
     },
     // 校验表单数据
     verify(formData) {
-      var citys=['IS','AS','BS','CS' ,'DS','ES']
-      var sexs=['男','女']
+      var citys = ['IS', 'AS', 'BS', 'CS', 'DS', 'ES']
+      var sexs = ['男', '女']
       // 名字校验
       let name = /^[\u4e00-\u9fa5]{0,5}$/
       let number = /^\d{1,3}$/
       let flag_name = name.test(formData.stuname)
       // 性别校验
-      let flag_sex = sexs.some(item=>formData.stusex===item)
-      let flag_city = citys.some(item=>formData.stucity===item)
+      let flag_sex = sexs.some(item => formData.stusex === item)
+      let flag_city = citys.some(item => formData.stucity === item)
       let flag_number = number.test(formData.stunumber)
       if (flag_number & flag_name & flag_city & flag_sex) {
         return true
