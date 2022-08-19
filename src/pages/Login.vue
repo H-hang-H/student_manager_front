@@ -6,7 +6,7 @@
         <el-input type="text" auto-complete="false" v-model="loginform.username" placeholder="请输入手机号" />
       </el-form-item>
       <el-form-item prop="password" label="密码">
-        <el-input type="password" auto-complete="false" v-model="loginform.password" />
+        <el-input type="password" auto-complete="false" v-model="loginform.password" placeholder="密码为6-13位"/>
       </el-form-item>
       <el-form-item class="btn_foot">
         <el-button type="primary" size="default" @click="denglu">登录</el-button>

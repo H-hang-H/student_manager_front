@@ -5,7 +5,7 @@ import {setToken,removeToken} from '../utils/toekn'
 
 const actions = {
     // 实现登录，token
-    getlogin({commit}, data) {
+    async getlogin({commit}, data) {
         let result=reqlogin(data).then(res=>{
             if(res.status===0){
                 commit('GETLOGIN',res.token)
